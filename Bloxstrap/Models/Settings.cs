@@ -14,6 +14,7 @@ namespace Bloxstrap.Models
         public bool CreateDesktopIcon { get; set; } = true;
         public bool MultiInstanceLaunching { get; set; } = true;
         public bool FixTeleports { get; set; } = true;
+        public bool ConfirmLaunches { get; set; } = false;
 
         // channel configuration
         public string Channel { get; set; } = RobloxDeployment.DefaultChannel;
