@@ -2774,5 +2774,41 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Menu.Title", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Allow multi-instance launching.
+        /// </summary>
+        public static string Menu_Integrations_AllowMultipleInstances_Title {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.AllowMultipleInstances.Title", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Allows for having more than one Roblox game client instance open simultaneously..
+        /// </summary>
+        public static string Menu_Integrations_AllowMultipleInstances_Description {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.AllowMultipleInstances.Description", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Fix cross-place teleportation.
+        /// </summary>
+        public static string Menu_Integrations_FixTeleports_Title {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.FixTeleports.Title", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Allows for cross-place teleportation with multiple instances. (fixes error 773).
+        /// </summary>
+        public static string Menu_Integrations_FixTeleports_Description {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.FixTeleports.Description", resourceCulture);
+            }
+        }
     }
 }

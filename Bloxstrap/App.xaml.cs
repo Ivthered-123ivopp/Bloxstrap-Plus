@@ -203,8 +203,10 @@ namespace Bloxstrap
 
             if (!IsFirstRun)
                 ShouldSaveConfigs = true;
+
+            // Disable multi instance warning.
             
-            if (Mutex.TryOpenExisting("ROBLOX_singletonMutex", out var _))
+            /* if (Mutex.TryOpenExisting("ROBLOX_singletonMutex", out var _))
             {
                 var result = Frontend.ShowMessageBox(
                     "Roblox is currently running, and launching another instance will close it. Are you sure you want to continue launching?", 
@@ -217,7 +219,7 @@ namespace Bloxstrap
                     StartupFinished();
                     return;
                 }
-            }
+            } */
 
             // start bootstrapper and show the bootstrapper modal if we're not running silently
             Logger.WriteLine(LOG_IDENT, "Initializing bootstrapper");
@@ -230,6 +232,28 @@ namespace Bloxstrap
                 dialog = Settings.Prop.BootstrapperStyle.GetNew();
                 bootstrapper.Dialog = dialog;
                 dialog.Bootstrapper = bootstrapper;
+            }
+
+            // handle roblox singleton mutex for multi-instance launching
+            // note we're handling it here in the main thread and NOT in the
+            // bootstrapper as handling mutexes in async contexts suuuuuucks
+
+            Mutex? singletonMutex = null;
+
+            if (Settings.Prop.MultiInstanceLaunching && LaunchSettings.RobloxLaunchMode == LaunchMode.Player)
+            {
+                Logger.WriteLine(LOG_IDENT, "Creating singleton mutex");
+
+                try
+                {
+                    Mutex.OpenExisting("ROBLOX_singletonMutex");
+                    Logger.WriteLine(LOG_IDENT, "Warning - singleton mutex already exists!");
+                }
+                catch
+                {
+                    // create the singleton mutex before the game client does
+                    singletonMutex = new Mutex(true, "ROBLOX_singletonMutex");
+                }
             }
 
             Task bootstrapperTask = Task.Run(async () => await bootstrapper.Run()).ContinueWith(t =>
@@ -257,6 +281,46 @@ namespace Bloxstrap
                 FinalizeExceptionHandling(exception, false);
             });
 
+            string CookiesFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Roblox\LocalStorage\RobloxCookies.dat");
+            App.Logger.WriteLine(LOG_IDENT, $"RobloxCookies.dat path is: {CookiesFilePath}");
+
+            if (LaunchSettings.RobloxLaunchMode == LaunchMode.Player) {
+                if (File.Exists(CookiesFilePath)) {
+                    FileAttributes attributes = File.GetAttributes(CookiesFilePath);
+
+                    if (Settings.Prop.FixTeleports) {
+                        App.Logger.WriteLine(LOG_IDENT, "Applying teleport fix...");
+
+                        if (!attributes.HasFlag(FileAttributes.ReadOnly)) {
+                            App.Logger.WriteLine(LOG_IDENT, $"RobloxCookies.dat is writable");
+
+                            try {
+                                FileStream fileStream = File.Open(CookiesFilePath, FileMode.Open, FileAccess.ReadWrite, FileShare.None);
+                                fileStream.SetLength(0);
+                                fileStream.Close();
+                            } catch (Exception ex) {
+                                App.Logger.WriteLine(LOG_IDENT, $"Failed to clear contents of RobloxCookies.dat | Exception: {ex}");
+                            } finally {
+                                File.SetAttributes(CookiesFilePath, FileAttributes.ReadOnly);
+                                App.Logger.WriteLine(LOG_IDENT, $"Added read-only attribute to RobloxCookies.dat");
+                            }
+                        } else {
+                            App.Logger.WriteLine(LOG_IDENT, $"RobloxCookies.dat is already read-only");
+                        }
+                    } else {
+                        App.Logger.WriteLine(LOG_IDENT, "Removing teleport fix...");
+
+                        if (attributes.HasFlag(FileAttributes.ReadOnly)) {
+                            File.SetAttributes(CookiesFilePath, attributes & ~FileAttributes.ReadOnly);
+                            App.Logger.WriteLine(LOG_IDENT, $"Removed read-only attribute from RobloxCookies.dat (teleport fix application)");
+                        }
+                    }
+                } else {
+                    App.Logger.WriteLine(LOG_IDENT, $"Failed to find RobloxCookies.dat | Path: {CookiesFilePath}");
+                    Frontend.ShowMessageBox($"Failed to find RobloxCookies.dat | Path: {CookiesFilePath}", MessageBoxImage.Error);
+                }
+            }
+
             // this ordering is very important as all wpf windows are shown as modal dialogs, mess it up and you'll end up blocking input to one of them
             dialog?.ShowBootstrapper();
 
@@ -266,6 +330,29 @@ namespace Bloxstrap
             Logger.WriteLine(LOG_IDENT, "Waiting for bootstrapper task to finish");
 
             bootstrapperTask.Wait();
+
+            if (singletonMutex is not null)
+            {
+                Logger.WriteLine(LOG_IDENT, "We have singleton mutex ownership! Running in background until all Roblox processes are closed");
+
+                // we've got ownership of the roblox singleton mutex!
+                // if we stop running, everything will screw up once any more roblox instances launched
+                while (Process.GetProcessesByName("RobloxPlayerBeta").Any()) 
+                {
+                    Thread.Sleep(5000);
+                };
+
+                App.Logger.WriteLine(LOG_IDENT, "All Roblox processes closed!");
+
+                if (File.Exists(CookiesFilePath)) {
+                    FileAttributes attributes = File.GetAttributes(CookiesFilePath);
+
+                    if (attributes.HasFlag(FileAttributes.ReadOnly)) {
+                        File.SetAttributes(CookiesFilePath, attributes & ~FileAttributes.ReadOnly);
+                        App.Logger.WriteLine(LOG_IDENT, $"Removed read-only attribute from RobloxCookies.dat (roblox end)");
+                    }
+                }
+            }
 
             StartupFinished();
         }

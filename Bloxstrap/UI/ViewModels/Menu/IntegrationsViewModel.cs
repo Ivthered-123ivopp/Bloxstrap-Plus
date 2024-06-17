@@ -88,6 +88,27 @@ namespace Bloxstrap.UI.ViewModels.Menu
             set => App.Settings.Prop.HideRPCButtons = !value;
         }
 
+        public bool MultiInstanceLaunchingEnabled
+        {
+            get => App.Settings.Prop.MultiInstanceLaunching;
+            set
+            {
+                App.Settings.Prop.MultiInstanceLaunching = value;
+
+                if (!value)
+                {
+                    FixTeleportsEnabled = value;
+                    OnPropertyChanged(nameof(FixTeleportsEnabled));
+                }
+            }
+        }
+
+        public bool FixTeleportsEnabled
+        {
+            get => App.Settings.Prop.FixTeleports;
+            set => App.Settings.Prop.FixTeleports = value;
+        }
+
         public bool DisableAppPatchEnabled
         {
             get => App.Settings.Prop.UseDisableAppPatch;

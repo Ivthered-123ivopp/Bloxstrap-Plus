@@ -1,12 +1,12 @@
 > [!CAUTION]
 > This is the only official place to download Bloxstrap. Any other websites offering downloads or claiming to be us are not controlled by us.
 
-# <img src="https://github.com/pizzaboxer/bloxstrap/raw/main/Images/Bloxstrap.png" width="48"/> Bloxstrap
+# <img src="https://github.com/the-the-1/bloxstrap-with-multi-instance-launching/raw/main/Images/Bloxstrap.png" width="48"/> Bloxstrap
 
-[![License](https://img.shields.io/github/license/pizzaboxer/bloxstrap)](https://github.com/pizzaboxer/bloxstrap/blob/main/LICENSE)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/pizzaboxer/bloxstrap/ci.yml?branch=main&label=builds)](https://github.com/pizzaboxer/bloxstrap/actions)
-[![Downloads](https://img.shields.io/github/downloads/pizzaboxer/bloxstrap/latest/total?color=981bfe)](https://github.com/pizzaboxer/bloxstrap/releases)
-[![Version](https://img.shields.io/github/v/release/pizzaboxer/bloxstrap?color=7a39fb)](https://github.com/pizzaboxer/bloxstrap/releases/latest)
+[![License](https://img.shields.io/github/license/the-the-1/bloxstrap-with-multi-instance-launching)](https://github.com/the-the-1/bloxstrap-with-multi-instance-launching/blob/main/LICENSE)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/the-the-1/bloxstrap-with-multi-instance-launching/ci.yml?branch=main&label=builds)](https://github.com/the-the-1/bloxstrap-with-multi-instance-launching/actions)
+[![Downloads](https://img.shields.io/github/downloads/the-the-1/bloxstrap-with-multi-instance-launching/latest/total?color=981bfe)](https://github.com/the-the-1/bloxstrap-with-multi-instance-launching/releases)
+[![Version](https://img.shields.io/github/v/release/the-the-1/bloxstrap-with-multi-instance-launching?color=7a39fb)](https://github.com/the-the-1/bloxstrap-with-multi-instance-launching/releases/latest)
 [![Discord](https://img.shields.io/discord/1099468797410283540?logo=discord&logoColor=white&label=discord&color=4d3dff)](https://discord.gg/nKjV3mGq6R)
 [![lol](https://img.shields.io/badge/mom%20made-pizza%20rolls-orange)](https://media.tenor.com/FIkSGbGycmAAAAAd/manly-roblox.gif)
 
@@ -19,7 +19,7 @@ Running into a problem or need help with something? [Check out the Wiki](https:/
 Bloxstrap is only supported for PCs running Windows.
  
  ## Installing
-Download the [latest release of Bloxstrap](https://github.com/pizzaboxer/bloxstrap/releases/latest), and run it. Configure your preferences if needed, and install. That's about it!
+Download the [latest release of Bloxstrap](https://github.com/the-the-1/bloxstrap-with-multi-instance-launching/releases/latest), and run it. Configure your preferences if needed, and install. That's about it!
 
 Alternatively, you can install Bloxstrap via [Winget](https://winstall.app/apps/pizzaboxer.Bloxstrap) by running this in a Command Prompt window:
 ```
@@ -48,7 +48,7 @@ All the available features are browsable through the Bloxstrap menu.
 ## Screenshots
 
 <p float="left">
-    <img src="https://github.com/pizzaboxer/bloxstrap/assets/41478239/dcfd0cdf-1aae-45bb-849a-f7710ec63b28" width="435" />
-    <img src="https://github.com/pizzaboxer/bloxstrap/assets/41478239/e08cdf28-4f99-46b5-99f2-5c338aac86db" width="390" />
-    <img src="https://github.com/pizzaboxer/bloxstrap/assets/41478239/7ba35223-9115-401f-bbc1-d15e9c5fd79e" width="232" />
+    <img src="https://github.com/the-the-1/bloxstrap-with-multi-instance-launching/assets/41478239/dcfd0cdf-1aae-45bb-849a-f7710ec63b28" width="435" />
+    <img src="https://github.com/the-the-1/bloxstrap-with-multi-instance-launching/assets/41478239/e08cdf28-4f99-46b5-99f2-5c338aac86db" width="390" />
+    <img src="https://github.com/the-the-1/bloxstrap-with-multi-instance-launching/assets/41478239/7ba35223-9115-401f-bbc1-d15e9c5fd79e" width="232" />
 <p>
