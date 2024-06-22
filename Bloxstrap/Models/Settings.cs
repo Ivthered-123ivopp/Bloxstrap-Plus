@@ -15,6 +15,8 @@ namespace Bloxstrap.Models
         public bool MultiInstanceLaunching { get; set; } = true;
         public bool FixTeleports { get; set; } = true;
         public bool ConfirmLaunches { get; set; } = false;
+        public string Locale { get; set; } = "nil";
+        public bool ForceRobloxLanguage { get; set; } = false;
 
         // channel configuration
         public string Channel { get; set; } = RobloxDeployment.DefaultChannel;

@@ -35,7 +35,7 @@ namespace Bloxstrap.UI.ViewModels.Menu
         {
             var dialog = new OpenFileDialog
             {
-                Filter = $"{Resources.Strings.Menu_IconFiles}|*.ico|{Resources.Strings.Menu_AllFiles}|*.*"
+                Filter = $"{Resources.Strings.Menu_IconFiles}|*.ico"
             };
 
             if (dialog.ShowDialog() != true)
@@ -63,6 +63,14 @@ namespace Bloxstrap.UI.ViewModels.Menu
                 App.Settings.Prop.Theme = value;
                 ((MainWindow)Window.GetWindow(_page)!).ApplyTheme();
             }
+        }
+
+        public static List<string> Languages => Locale.SupportedLocales.Values.ToList();
+
+        public string SelectedLanguage 
+        { 
+            get => Locale.SupportedLocales[App.Settings.Prop.Locale]; 
+            set => App.Settings.Prop.Locale = Locale.GetIdentifierFromName(value);
         }
 
         public IEnumerable<BootstrapperStyle> Dialogs { get; } = BootstrapperStyleEx.Selections;
