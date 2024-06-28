@@ -95,6 +95,15 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Bootstrapper.ConfirmLaunch", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Roblox is currently running, and launching another instance will close it. Are you sure you want to continue launching?.
+        /// </summary>
+        public static string Bootstrapper_ConfirmLaunch_MultiInstanceEnabled {
+            get {
+                return ResourceManager.GetString("Bootstrapper.ConfirmLaunch.MultiInstanceEnabled", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to It&apos;s possible that something is preventing Bloxstrap from connecting to the internet. Please check and try again..
@@ -2793,7 +2802,7 @@ namespace Bloxstrap.Resources {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Fix cross-place teleportation.
+        ///   Looks up a localized string similar to Allow cross-place teleportation.
         /// </summary>
         public static string Menu_Integrations_FixTeleports_Title {
             get {
@@ -2807,6 +2816,15 @@ namespace Bloxstrap.Resources {
         public static string Menu_Integrations_FixTeleports_Description {
             get {
                 return ResourceManager.GetString("Menu.Integrations.FixTeleports.Description", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to This setting will log you out of the desktop app. Are you sure you want to enable it?.
+        /// </summary>
+        public static string Menu_Integrations_FixTeleports_ConfirmEnable {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.FixTeleports.ConfirmEnable", resourceCulture);
             }
         }
     }

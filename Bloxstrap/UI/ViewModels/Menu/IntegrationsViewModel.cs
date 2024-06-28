@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Input;
 
 using CommunityToolkit.Mvvm.Input;
@@ -106,7 +107,20 @@ namespace Bloxstrap.UI.ViewModels.Menu
         public bool FixTeleportsEnabled
         {
             get => App.Settings.Prop.FixTeleports;
-            set => App.Settings.Prop.FixTeleports = value;
+            set
+            {
+                if (value)
+                {
+                    var result = Frontend.ShowMessageBox(Bloxstrap.Resources.Strings.Menu_Integrations_FixTeleports_ConfirmEnable, MessageBoxImage.Warning, MessageBoxButton.YesNo);
+
+                    if (result != MessageBoxResult.Yes)
+                    {
+                        return;
+                    }
+                }
+
+                App.Settings.Prop.FixTeleports = value;
+            }
         }
 
         public bool DisableAppPatchEnabled

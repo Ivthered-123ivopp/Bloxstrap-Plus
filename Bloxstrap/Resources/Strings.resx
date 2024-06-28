@@ -129,6 +129,9 @@
   <data name="Bootstrapper.ConfirmLaunch" xml:space="preserve">
     <value>Roblox is currently running, and launching another instance will close it. Are you sure you want to continue launching?</value>
   </data>
+  <data name="Bootstrapper.ConfirmLaunch.MultiInstanceEnabled" xml:space="preserve">
+    <value>Roblox is currently running, are you sure you want to launch another instance?</value>
+  </data>
   <data name="Bootstrapper.Connectivity.Preventing" xml:space="preserve">
     <value>It's possible that something is preventing Bloxstrap from connecting to the internet. Please check and try again.</value>
   </data>
@@ -622,7 +625,7 @@ Would you like to upgrade your currently installed version?</value>
     <value>Automatically update Bloxstrap</value>
   </data>
   <data name="Menu.Behaviour.ConfirmLaunches.Description" xml:space="preserve">
-    <value>Prevent against closures of your existing game from accidentally launching another one.</value>
+    <value>Prevent against accidentally launching another Roblox instance.</value>
   </data>
   <data name="Menu.Behaviour.ConfirmLaunches.Title" xml:space="preserve">
     <value>Prompt to confirm when launching another Roblox instance</value>
@@ -1030,10 +1033,13 @@ Selecting 'No' will ignore this warning and continue installation.</value>
     <value>Allows for having more than one Roblox game client instance open simultaneously.</value>
   </data>
   <data name="Menu.Integrations.FixTeleports.Title" xml:space="preserve">
-    <value>Fix cross-place teleportation</value>
+    <value>Allow cross-place teleportation</value>
   </data>
   <data name="Menu.Integrations.FixTeleports.Description" xml:space="preserve">
     <value>Allows for cross-place teleportation with multiple instances. (fixes error 773)</value>
+  </data>
+  <data name="Menu.Integrations.FixTeleports.ConfirmEnable" xml:space="preserve">
+    <value>This setting will log you out of the desktop app. Are you sure you want to enable it?</value>
   </data>
   <data name="Dialog.LanguageSelector.Header" xml:space="preserve">
     <value>Choose preferred language</value>
