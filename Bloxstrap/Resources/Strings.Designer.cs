@@ -812,7 +812,7 @@ namespace Bloxstrap.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fluent (Classic).
+        ///   Looks up a localized string similar to Bloxstrap (Classic).
         /// </summary>
         public static string Enums_BootstrapperStyle_ClassicFluentDialog {
             get {
@@ -821,7 +821,7 @@ namespace Bloxstrap.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fluent (Glass).
+        ///   Looks up a localized string similar to Bloxstrap (Glass).
         /// </summary>
         public static string Enums_BootstrapperStyle_FluentAeroDialog {
             get {
@@ -830,7 +830,7 @@ namespace Bloxstrap.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fluent.
+        ///   Looks up a localized string similar to Bloxstrap.
         /// </summary>
         public static string Enums_BootstrapperStyle_FluentDialog {
             get {
@@ -857,7 +857,7 @@ namespace Bloxstrap.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Progress (~2014).
+        ///   Looks up a localized string similar to Roblox (~2014).
         /// </summary>
         public static string Enums_BootstrapperStyle_ProgressDialog {
             get {
@@ -1643,7 +1643,7 @@ namespace Bloxstrap.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Roblox will be forced to display the same language that Bloxstrap is presently using..
+        ///   Looks up a localized string similar to Only applies to games launched from the Roblox website..
         /// </summary>
         public static string Menu_Behaviour_ForceRobloxLanguage_Description {
             get {
@@ -1652,7 +1652,7 @@ namespace Bloxstrap.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Force Roblox language.
+        ///   Looks up a localized string similar to Allow use of unsupported Roblox languages.
         /// </summary>
         public static string Menu_Behaviour_ForceRobloxLanguage_Title {
             get {
