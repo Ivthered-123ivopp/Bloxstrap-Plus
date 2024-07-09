@@ -154,7 +154,7 @@ namespace Bloxstrap
                 else if (ex.GetType() == typeof(AggregateException))
                     ex = ex.InnerException!;
 
-                Frontend.ShowConnectivityDialog("Roblox", message, ex);
+                Frontend.ShowConnectivityDialog(Strings.Dialog_Connectivity_UnableToConnect, message, ex);
 
                 App.Terminate(ErrorCode.ERROR_CANCELLED);
             }
@@ -336,7 +336,7 @@ namespace Bloxstrap
                 gameClientPid = gameClient.Id;
             }
 
-            List<Process> autocloseProcesses = new();
+            List<Process?> autocloseProcesses = new();
             ActivityWatcher? activityWatcher = null;
             DiscordRichPresence? richPresence = null;
 
@@ -379,7 +379,13 @@ namespace Bloxstrap
 
                 try
                 {
-                    Process process = Process.Start(integration.Location, integration.LaunchArgs);
+                    var process = Process.Start(new ProcessStartInfo
+                    {
+                        FileName = integration.Location,
+                        Arguments = integration.LaunchArgs.Replace("\r\n", " "),
+                        WorkingDirectory = Path.GetDirectoryName(integration.Location),
+                        UseShellExecute = true
+                    });
 
                     if (integration.AutoClose)
                     {
@@ -413,9 +419,9 @@ namespace Bloxstrap
 
             richPresence?.Dispose();
 
-            foreach (Process process in autocloseProcesses)
+            foreach (var process in autocloseProcesses)
             {
-                if (process.HasExited)
+                if (process is null || process.HasExited)
                     continue;
 
                 App.Logger.WriteLine(LOG_IDENT, $"Autoclosing process '{process.ProcessName}' (PID {process.Id})");
@@ -1258,6 +1264,9 @@ namespace Bloxstrap
                     continue;
                 }
 
+                if (!App.Settings.Prop.UseFastFlagManager && String.Equals(relativeFile, "ClientSettings\\ClientAppSettings.json", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
                 if (relativeFile.EndsWith(".lock"))
                     continue;
 
@@ -1458,7 +1467,7 @@ namespace Bloxstrap
                     string hash = MD5Hash.FromStream(fileStream);
 
                     if (hash != package.Signature)
-                        throw new ChecksumFailedException($"Failed to verify download of {packageUrl}\n\nGot signature: {hash}\n\nPackage has been downloaded to {packageLocation}\n\nPlease send the file shown above in a bug report.");
+                        throw new ChecksumFailedException($"Failed to verify download of {packageUrl}\n\nExpected hash: {package.Signature}\nGot hash: {hash}");
 
                     App.Logger.WriteLine(LOG_IDENT, $"Finished downloading! ({totalBytesRead} bytes total)");
                     break;
@@ -1468,7 +1477,17 @@ namespace Bloxstrap
                     App.Logger.WriteLine(LOG_IDENT, $"An exception occurred after downloading {totalBytesRead} bytes. ({i}/{maxTries})");
                     App.Logger.WriteException(LOG_IDENT, ex);
 
-                    if (i >= maxTries || ex.GetType() == typeof(ChecksumFailedException))
+                    if (ex.GetType() == typeof(ChecksumFailedException))
+                    {
+                        Frontend.ShowConnectivityDialog(
+                            Strings.Dialog_Connectivity_UnableToDownload,
+                            String.Format(Strings.Dialog_Connectivity_UnableToDownloadReason, "[https://github.com/pizzaboxer/bloxstrap/wiki/Bloxstrap-is-unable-to-download-Roblox](https://github.com/pizzaboxer/bloxstrap/wiki/Bloxstrap-is-unable-to-download-Roblox)"),
+                            ex
+                        );
+
+                        App.Terminate(ErrorCode.ERROR_CANCELLED);
+                    }
+                    else if (i >= maxTries)
                         throw;
 
                     if (File.Exists(packageLocation))

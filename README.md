@@ -1,5 +1,5 @@
 > [!CAUTION]
-> This is the only official place to download Bloxstrap. Any other websites offering downloads or claiming to be us are not controlled by us.
+> The only official places to download Bloxstrap are this GitHub repository and [bloxstrap.pizzaboxer.xyz](https://bloxstrap.pizzaboxer.xyz). Any other websites offering downloads or claiming to be us are not controlled by us.
 
 # <img src="https://github.com/the-the-1/bloxstrap-with-multi-instance-launching/raw/main/Images/Bloxstrap.png" width="48"/> Bloxstrap
 
@@ -41,9 +41,6 @@ Here's some of the features that Bloxstrap provides over the stock Roblox bootst
 * Lets you see what region your current server is located in
 
 All the available features are browsable through the Bloxstrap menu.
-
-> [!WARNING]
-> Multi-instance launching will be removed in a future version of Bloxstrap. [Read more](https://github.com/pizzaboxer/bloxstrap/wiki/Plans-to-remove-multi%E2%80%90instance-launching-from-Bloxstrap)
 
 ## Screenshots
 

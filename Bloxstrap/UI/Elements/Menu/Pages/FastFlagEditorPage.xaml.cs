@@ -6,6 +6,8 @@ using System.Collections.ObjectModel;
 using Wpf.Ui.Mvvm.Contracts;
 
 using Bloxstrap.UI.Elements.Dialogs;
+using Newtonsoft.Json.Linq;
+using System.Xml.Linq;
 
 namespace Bloxstrap.UI.Elements.Menu.Pages
 {
@@ -96,27 +98,19 @@ namespace Bloxstrap.UI.Elements.Menu.Pages
                 return;
 
             if (dialog.Tabs.SelectedIndex == 0)
-                AddEntry(dialog.FlagNameTextBox.Text, dialog.FlagValueTextBox.Text);
+                AddSingle(dialog.FlagNameTextBox.Text, dialog.FlagValueTextBox.Text);
             else if (dialog.Tabs.SelectedIndex == 1)
                 ImportJSON(dialog.JsonTextBox.Text);
         }
 
-        private void AddEntry(string name, string value)
+        private void AddSingle(string name, string value)
         {
             FastFlag? entry;
 
             if (App.FastFlags.GetValue(name) is null)
             {
-                if (!_validPrefixes.Where(x => name.StartsWith(x)).Any())
+                if (!ValidateFlagEntry(name, value))
                 {
-                    Frontend.ShowMessageBox(Bloxstrap.Resources.Strings.Menu_FastFlagEditor_InvalidPrefix, MessageBoxImage.Error);
-                    ShowAddDialog();
-                    return;
-                }
-
-                if (!name.All(x => char.IsLetterOrDigit(x) || x == '_'))
-                {
-                    Frontend.ShowMessageBox(Bloxstrap.Resources.Strings.Menu_FastFlagEditor_InvalidCharacter, MessageBoxImage.Error);
                     ShowAddDialog();
                     return;
                 }
@@ -240,10 +234,41 @@ namespace Bloxstrap.UI.Elements.Menu.Pages
                 if (App.FastFlags.Prop.ContainsKey(pair.Key) && !overwriteConflicting)
                     continue;
 
+                var val = pair.Value.ToString();
+
+                if (val is null)
+                    continue;
+
+                if (!ValidateFlagEntry(pair.Key, val))
+                    continue;
+
                 App.FastFlags.SetValue(pair.Key, pair.Value);
             }
 
             ClearSearch();
+        }
+
+        private bool ValidateFlagEntry(string name, string value)
+        {
+            string lowerValue = value.ToLowerInvariant();
+            string errorMessage = "";
+
+            if (!_validPrefixes.Where(x => name.StartsWith(x)).Any())
+                errorMessage = Bloxstrap.Resources.Strings.Menu_FastFlagEditor_InvalidPrefix;
+            else if (!name.All(x => char.IsLetterOrDigit(x) || x == '_'))
+                errorMessage = Bloxstrap.Resources.Strings.Menu_FastFlagEditor_InvalidCharacter;
+            else if ((name.StartsWith("FInt") || name.StartsWith("DFInt")) && !Int32.TryParse(value, out _))
+                errorMessage = Bloxstrap.Resources.Strings.Menu_FastFlagEditor_InvalidNumberValue;
+            else if ((name.StartsWith("FFlag") || name.StartsWith("DFFlag")) && lowerValue != "true" && lowerValue != "false")
+                errorMessage = Bloxstrap.Resources.Strings.Menu_FastFlagEditor_InvalidBoolValue;
+
+            if (!String.IsNullOrEmpty(errorMessage))
+            {
+                Frontend.ShowMessageBox(String.Format(errorMessage, name), MessageBoxImage.Error);
+                return false;
+            }
+
+            return true;
         }
 
         // refresh list on page load to synchronize with preset page
@@ -253,30 +278,17 @@ namespace Bloxstrap.UI.Elements.Menu.Pages
         {
             int index = e.Row.GetIndex();
             FastFlag entry = _fastFlagList[index];
+            
+            var textbox = e.EditingElement as TextBox;
+
+            if (textbox is null)
+                return;
 
             switch (e.Column.Header)
             {
-                /* case "Enabled":
-                    bool enabled = (bool)((CheckBox)e.EditingElement).IsChecked!;
-
-                    if (enabled)
-                    {
-                        App.FastFlags.SetValue(entry.Name, entry.Value);
-                        App.FastFlags.SetValue($"Disable{entry.Name}", null);
-                    }
-                    else
-                    {
-                        App.FastFlags.SetValue(entry.Name, null);
-                        App.FastFlags.SetValue($"Disable{entry.Name}", entry.Value);
-                    }
-
-                    break; */
-
                 case "Name":
-                    var textbox = e.EditingElement as TextBox;
-
                     string oldName = entry.Name;
-                    string newName = textbox!.Text;
+                    string newName = textbox.Text;
 
                     if (newName == oldName)
                         return;
@@ -300,7 +312,15 @@ namespace Bloxstrap.UI.Elements.Menu.Pages
                     break;
 
                 case "Value":
-                    string newValue = ((TextBox)e.EditingElement).Text;
+                    string oldValue = entry.Value;
+                    string newValue = textbox.Text;
+
+                    if (!ValidateFlagEntry(entry.Name, newValue))
+                    {
+                        e.Cancel = true;
+                        textbox.Text = oldValue;
+                        return;
+                    }
 
                     App.FastFlags.SetValue(entry.Name, newValue);
 
@@ -342,7 +362,7 @@ namespace Bloxstrap.UI.Elements.Menu.Pages
         private void ExportJSONButton_Click(object sender, RoutedEventArgs e)
         {
             string json = JsonSerializer.Serialize(App.FastFlags.Prop, new JsonSerializerOptions { WriteIndented = true });
-            Clipboard.SetText(json);
+            Clipboard.SetDataObject(json);
             Frontend.ShowMessageBox(Bloxstrap.Resources.Strings.Menu_FastFlagEditor_JsonCopiedToClipboard, MessageBoxImage.Information);
         }
 

@@ -94,6 +94,12 @@ namespace Bloxstrap.UI.Elements.Bootstrapper.Base
         {
             Text = App.Settings.Prop.BootstrapperTitle;
             Icon = App.Settings.Prop.BootstrapperIcon.GetIcon();
+
+            if (Locale.RightToLeft)
+            {
+                this.RightToLeft = RightToLeft.Yes;
+                this.RightToLeftLayout = true;
+            }
         }
 
         #region WinForms event handlers
