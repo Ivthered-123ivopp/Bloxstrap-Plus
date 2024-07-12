@@ -30,7 +30,7 @@ namespace Bloxstrap
         public static LaunchSettings LaunchSettings { get; private set; } = null!;
 
         public static BuildMetadataAttribute BuildMetadata = Assembly.GetExecutingAssembly().GetCustomAttribute<BuildMetadataAttribute>()!;
-        public static string Version = Assembly.GetExecutingAssembly().GetName().Version!.ToString()[..^2];
+        public static string Version = Assembly.GetExecutingAssembly().GetName().Version!.ToString();
 
         public static NotifyIconWrapper? NotifyIcon { get; private set; }
 
