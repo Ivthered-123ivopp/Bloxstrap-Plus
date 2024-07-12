@@ -624,6 +624,8 @@ namespace Bloxstrap
 
             int versionComparison = Utilities.CompareVersions(App.Version, releaseInfo.TagName);
 
+            App.Logger.WriteLine(LOG_IDENT, $"VersionComparison: {versionComparison}");
+            
             // check if we aren't using a deployed build, so we can update to one if a new version comes out
             if (versionComparison == 0 && App.BuildMetadata.CommitRef.StartsWith("tag") || versionComparison == 1)
             {
