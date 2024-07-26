@@ -1,4 +1,6 @@
-﻿namespace Bloxstrap
+﻿using System.Windows.Media.Animation;
+
+namespace Bloxstrap
 {
     public static class RobloxDeployment
     {
@@ -127,7 +129,7 @@
             }
             else
             {
-                string path = $"/v2/client-version/{binaryType}/channel/{channel}";
+                string path = $"/v2/client-version/{binaryType}/channel/LIVE";
                 HttpResponseMessage deployInfoResponse;
 
                 try
@@ -193,6 +195,10 @@
             ClientVersionCache[cacheKey] = clientVersion;
 
             return clientVersion;
+
+
+
+
         }
     }
 }
