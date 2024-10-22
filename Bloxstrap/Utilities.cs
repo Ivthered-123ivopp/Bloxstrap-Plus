@@ -1,18 +1,11 @@
 ﻿using System.ComponentModel;
-using System.Security.Principal;
+using System.Security.AccessControl;
+using System.Windows;
 
 namespace Bloxstrap
 {
     static class Utilities
     {
-        /// <summary>
-        /// Is process running as administrator
-        /// https://stackoverflow.com/a/11660205
-        /// </summary>
-        public static bool IsAdministrator =>
-           new WindowsPrincipal(WindowsIdentity.GetCurrent())
-               .IsInRole(WindowsBuiltInRole.Administrator);
-
         public static void ShellExecute(string website)
         {
             try
@@ -49,20 +42,19 @@ namespace Bloxstrap
         ///  0: version1 == version2 <br />
         ///  1: version1 &gt; version2
         /// </returns>
-        public static int CompareVersions(string versionStr1, string versionStr2)
+        public static VersionComparison CompareVersions(string versionStr1, string versionStr2)
         {
             var version1 = new Version(versionStr1.Replace("v", ""));
             var version2 = new Version(versionStr2.Replace("v", ""));
 
-            return version1.CompareTo(version2);
+            return (VersionComparison)version1.CompareTo(version2);
         }
 
         public static string GetRobloxVersion(bool studio)
         {
-            string versionGuid = studio ? App.State.Prop.StudioVersionGuid : App.State.Prop.PlayerVersionGuid;
-            string fileName = studio ? "RobloxStudioBeta.exe" : "RobloxPlayerBeta.exe";
+            string fileName = studio ? "Studio/RobloxStudioBeta.exe" : "Player/RobloxPlayerBeta.exe";
 
-            string playerLocation = Path.Combine(Paths.Versions, versionGuid, fileName);
+            string playerLocation = Path.Combine(Paths.Roblox, fileName);
 
             if (!File.Exists(playerLocation))
                 return "";
@@ -88,6 +80,75 @@ namespace Bloxstrap
                 App.Logger.WriteLine(LOG_IDENT, $"Unable to fetch processes!");
                 App.Logger.WriteException(LOG_IDENT, ex);
                 return Array.Empty<Process>(); // can we retry?
+            }
+        }
+
+        public static void RemoveTeleportFix()
+        {
+            const string LOG_IDENT = "Utilities::RemoveTeleportFix";
+
+            string user = Environment.UserDomainName + "\\" + Environment.UserName;
+
+            try
+            {
+                FileInfo fileInfo = new FileInfo(App.RobloxCookiesFilePath);
+                FileSecurity fileSecurity = fileInfo.GetAccessControl();
+
+                fileSecurity.RemoveAccessRule(new FileSystemAccessRule(user, FileSystemRights.Read, AccessControlType.Deny));
+                fileSecurity.RemoveAccessRule(new FileSystemAccessRule(user, FileSystemRights.Write, AccessControlType.Allow));
+
+                fileInfo.SetAccessControl(fileSecurity);
+
+                App.Logger.WriteLine(LOG_IDENT, "Successfully removed teleport fix.");
+            }
+            catch (Exception ex)
+            {
+                Frontend.ShowExceptionDialog(ex);
+            }
+        }
+
+        public static void ApplyTeleportFix()
+        {
+            const string LOG_IDENT = "Utilities::ApplyTeleportFix";
+
+            string user = Environment.UserDomainName + "\\" + Environment.UserName;
+
+            if (File.Exists(App.RobloxCookiesFilePath))
+            {
+                if (App.Settings.Prop.FixTeleports)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "Attempting to apply teleport fix...");
+
+                    try
+                    {
+                        FileInfo fileInfo = new FileInfo(App.RobloxCookiesFilePath);
+                        FileSecurity fileSecurity = fileInfo.GetAccessControl();
+
+                        fileSecurity.AddAccessRule(new FileSystemAccessRule(user, FileSystemRights.Read, AccessControlType.Deny));
+                        fileSecurity.AddAccessRule(new FileSystemAccessRule(user, FileSystemRights.Write, AccessControlType.Allow));
+
+                        fileInfo.SetAccessControl(fileSecurity);
+
+                        App.Logger.WriteLine(LOG_IDENT, "Successfully made RobloxCookies.dat write-only.");
+                    }
+                    catch (Exception ex)
+                    {
+                        App.Logger.WriteLine(LOG_IDENT, "Failed to make RobloxCookies.dat write-only.");
+                        App.Logger.WriteException(LOG_IDENT, ex);
+                        Frontend.ShowMessageBox(Strings.Utilities_ApplyTeleportFixFail, MessageBoxImage.Error);
+                        Frontend.ShowExceptionDialog(ex);
+                    }
+                }
+                else
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "Removing teleport fix...");
+                    RemoveTeleportFix();
+                }
+            }
+            else
+            {
+                App.Logger.WriteLine(LOG_IDENT, $"Failed to find RobloxCookies.dat");
+                Frontend.ShowMessageBox($"Failed to find RobloxCookies.dat | Path: {App.RobloxCookiesFilePath}", MessageBoxImage.Error);
             }
         }
     }

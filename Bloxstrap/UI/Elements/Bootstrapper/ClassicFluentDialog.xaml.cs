@@ -1,9 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
-
-using Wpf.Ui.Appearance;
-using Wpf.Ui.Mvvm.Contracts;
-using Wpf.Ui.Mvvm.Services;
+using System.Windows.Shell;
 
 using Bloxstrap.UI.ViewModels.Bootstrapper;
 using Bloxstrap.UI.Elements.Bootstrapper.Base;
@@ -62,6 +59,26 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
             }
         }
 
+        public TaskbarItemProgressState TaskbarProgressState
+        {
+            get => _viewModel.TaskbarProgressState;
+            set
+            {
+                _viewModel.TaskbarProgressState = value;
+                _viewModel.OnPropertyChanged(nameof(_viewModel.TaskbarProgressState));
+            }
+        }
+
+        public double TaskbarProgressValue
+        {
+            get => _viewModel.TaskbarProgressValue;
+            set
+            {
+                _viewModel.TaskbarProgressValue = value;
+                _viewModel.OnPropertyChanged(nameof(_viewModel.TaskbarProgressValue));
+            }
+        }
+
         public bool CancelEnabled
         {
             get => _viewModel.CancelEnabled;
@@ -78,7 +95,6 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
         public ClassicFluentDialog()
         {
             InitializeComponent();
-            ApplyTheme();
 
             _viewModel = new ClassicFluentDialogViewModel(this);
             DataContext = _viewModel;
@@ -89,7 +105,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
         private void UiWindow_Closing(object sender, CancelEventArgs e)
         {
             if (!_isClosing)
-                Bootstrapper?.CancelInstall();
+                Bootstrapper?.Cancel();
         }
 
         #region IBootstrapperDialog Methods

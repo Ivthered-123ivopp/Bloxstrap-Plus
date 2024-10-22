@@ -1,27 +1,20 @@
 ﻿using Bloxstrap.Enums.FlagPresets;
-using System.Windows.Forms;
-
-using Windows.Win32;
-using Windows.Win32.Graphics.Gdi;
 
 namespace Bloxstrap
 {
     public class FastFlagManager : JsonManager<Dictionary<string, object>>
     {
+        public override string ClassName => nameof(FastFlagManager);
+
+        public override string LOG_IDENT_CLASS => ClassName;
+        
         public override string FileLocation => Path.Combine(Paths.Modifications, "ClientSettings\\ClientAppSettings.json");
+
+        public bool Changed => !OriginalProp.SequenceEqual(Prop);
 
         public static IReadOnlyDictionary<string, string> PresetFlags = new Dictionary<string, string>
         {
             { "Network.Log", "FLogNetwork" },
-
-#if DEBUG
-            { "HTTP.Log", "DFLogHttpTraceLight" },
-
-            { "HTTP.Proxy.Enable", "DFFlagDebugEnableHttpProxy" },
-            { "HTTP.Proxy.Address.1", "DFStringDebugPlayerHttpProxyUrl" },
-            { "HTTP.Proxy.Address.2", "DFStringHttpCurlProxyHostAndPort" },
-            { "HTTP.Proxy.Address.3", "DFStringHttpCurlProxyHostAndPortForExternalUrl" },
-#endif
 
             { "Rendering.Framerate", "DFIntTaskSchedulerTargetFps" },
             { "Rendering.ManualFullscreen", "FFlagHandleAltEnterFullscreenManually" },
@@ -32,9 +25,6 @@ namespace Bloxstrap
 
             { "Rendering.Mode.D3D11", "FFlagDebugGraphicsPreferD3D11" },
             { "Rendering.Mode.D3D10", "FFlagDebugGraphicsPreferD3D11FL10" },
-            { "Rendering.Mode.Vulkan", "FFlagDebugGraphicsPreferVulkan" },
-            { "Rendering.Mode.Vulkan.Fix", "FFlagRenderVulkanFixMinimizeWindow" },
-            { "Rendering.Mode.OpenGL", "FFlagDebugGraphicsPreferOpenGL" },
 
             { "Rendering.Lighting.Voxel", "DFFlagDebugRenderForceTechnologyVoxel" },
             { "Rendering.Lighting.ShadowMap", "FFlagDebugForceFutureIsBrightPhase2" },
@@ -46,31 +36,27 @@ namespace Bloxstrap
 
             { "UI.Hide", "DFIntCanHideGuiGroupId" },
             { "UI.FontSize", "FIntFontSizePadding" },
-#if DEBUG
-            { "UI.FlagState", "FStringDebugShowFlagState" },
-#endif
 
-            { "UI.Menu.GraphicsSlider", "FFlagFixGraphicsQuality" },
             { "UI.FullscreenTitlebarDelay", "FIntFullscreenTitleBarTriggerDelayMillis" },
             
-            { "UI.Menu.Style.DisableV2", "FFlagDisableNewIGMinDUA" },
+            { "UI.Menu.Style.V2Rollout", "FIntNewInGameMenuPercentRollout3" },
             { "UI.Menu.Style.EnableV4.1", "FFlagEnableInGameMenuControls" },
             { "UI.Menu.Style.EnableV4.2", "FFlagEnableInGameMenuModernization" },
             { "UI.Menu.Style.EnableV4Chrome", "FFlagEnableInGameMenuChrome" },
+            { "UI.Menu.Style.ReportButtonCutOff", "FFlagFixReportButtonCutOff" },
+
 
             { "UI.Menu.Style.ABTest.1", "FFlagEnableMenuControlsABTest" },
             { "UI.Menu.Style.ABTest.2", "FFlagEnableV3MenuABTest3" },
-            { "UI.Menu.Style.ABTest.3", "FFlagEnableInGameMenuChromeABTest3" }
+            { "UI.Menu.Style.ABTest.3", "FFlagEnableInGameMenuChromeABTest3" },
+            { "UI.Menu.Style.ABTest.4", "FFlagEnableInGameMenuChromeABTest4" }
         };
 
-        // only one missing here is Metal because lol
         public static IReadOnlyDictionary<RenderingMode, string> RenderingModes => new Dictionary<RenderingMode, string>
         {
             { RenderingMode.Default, "None" },
-            // { RenderingMode.Vulkan, "Vulkan" },
             { RenderingMode.D3D11, "D3D11" },
             { RenderingMode.D3D10, "D3D10" },
-            // { RenderingMode.OpenGL, "OpenGL" }
         };
 
         public static IReadOnlyDictionary<LightingMode, string> LightingModes => new Dictionary<LightingMode, string>
@@ -106,10 +92,11 @@ namespace Bloxstrap
                 InGameMenuVersion.Default,
                 new Dictionary<string, string?>
                 {
-                    { "DisableV2", null },
+                    { "V2Rollout", null },
                     { "EnableV4", null },
                     { "EnableV4Chrome", null },
-                    { "ABTest", null }
+                    { "ABTest", null },
+                    { "ReportButtonCutOff", null }
                 }
             },
 
@@ -117,10 +104,11 @@ namespace Bloxstrap
                 InGameMenuVersion.V1,
                 new Dictionary<string, string?>
                 {
-                    { "DisableV2", "True" },
+                    { "V2Rollout", "0" },
                     { "EnableV4", "False" },
                     { "EnableV4Chrome", "False" },
-                    { "ABTest", "False" }
+                    { "ABTest", "False" },
+                    { "ReportButtonCutOff", "False" }
                 }
             },
 
@@ -128,10 +116,11 @@ namespace Bloxstrap
                 InGameMenuVersion.V2,
                 new Dictionary<string, string?>
                 {
-                    { "DisableV2", "False" },
+                    { "V2Rollout", "100" },
                     { "EnableV4", "False" },
                     { "EnableV4Chrome", "False" },
-                    { "ABTest", "False" }
+                    { "ABTest", "False" },
+                    { "ReportButtonCutOff", null }
                 }
             },
 
@@ -139,10 +128,11 @@ namespace Bloxstrap
                 InGameMenuVersion.V4,
                 new Dictionary<string, string?>
                 {
-                    { "DisableV2", "True" },
+                    { "V2Rollout", "0" },
                     { "EnableV4", "True" },
                     { "EnableV4Chrome", "False" },
-                    { "ABTest", "False" }
+                    { "ABTest", "False" },
+                    { "ReportButtonCutOff", null }
                 }
             },
 
@@ -150,10 +140,11 @@ namespace Bloxstrap
                 InGameMenuVersion.V4Chrome,
                 new Dictionary<string, string?>
                 {
-                    { "DisableV2", "True" },
+                    { "V2Rollout", "0" },
                     { "EnableV4", "True" },
                     { "EnableV4Chrome", "True" },
-                    { "ABTest", "False" }
+                    { "ABTest", "False" },
+                    { "ReportButtonCutOff", null }
                 }
             }
         };
@@ -232,14 +223,6 @@ namespace Bloxstrap
             return mapping.First().Key;
         }
 
-        public void CheckManualFullscreenPreset()
-        {
-            if (GetPreset("Rendering.Mode.Vulkan") == "True" || GetPreset("Rendering.Mode.OpenGL") == "True")
-                SetPreset("Rendering.ManualFullscreen", null);
-            else
-                SetPreset("Rendering.ManualFullscreen", "False");
-        }
-
         public override void Save()
         {
             // convert all flag values to strings before saving
@@ -248,21 +231,21 @@ namespace Bloxstrap
                 Prop[pair.Key] = pair.Value.ToString()!;
 
             base.Save();
+
+            // clone the dictionary
+            OriginalProp = new(Prop);
         }
 
-        public override void Load()
+        public override void Load(bool alertFailure = true)
         {
-            base.Load();
+            base.Load(alertFailure);
 
-            CheckManualFullscreenPreset();
+            // clone the dictionary
+            OriginalProp = new(Prop);
 
             // TODO - remove when activity tracking has been revamped
             if (GetPreset("Network.Log") != "7")
                 SetPreset("Network.Log", "7");
-
-            string? val = GetPreset("UI.Menu.Style.EnableV4.1");
-            if (GetPreset("UI.Menu.Style.EnableV4.2") != val)
-                SetPreset("UI.Menu.Style.EnableV4.2", val);
         }
     }
 }
